@@ -25,7 +25,10 @@
 
     #include <TTGO.h>
     
+    #define gui_BACKGROUND_IMAGE_FILE        "/Fondo1.rgb565"
+
     void gui_setup( void );
     void gui_loop( void );
+    void gui_set_background( void );
 
 #endif // _STATUSBAR_H
