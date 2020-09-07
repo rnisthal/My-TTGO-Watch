@@ -3,7 +3,7 @@
  *   Copyright  2020  Dirk Brosswick
  *   Email: dirk.brosswick@googlemail.com
  ****************************************************************************/
- 
+
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 
 LV_IMG_DECLARE(bg2)
 
-void gui_setup( void )
+void gui_setup(void)
 {
     gui_set_background();
 
@@ -68,60 +68,79 @@ void gui_setup( void )
     update_tile_setup();
 
     statusbar_setup();
-    lv_disp_trig_activity( NULL );
+    lv_disp_trig_activity(NULL);
 
     keyboard_setup();
 
     return;
 }
 
-void gui_loop( void ) {
-    // if we run in silence mode    
-    if ( powermgm_get_event( POWERMGM_SILENCE_WAKEUP ) ) {
-        if ( lv_disp_get_inactive_time(NULL) < display_get_timeout() * 1000 ) {
+void gui_loop(void)
+{
+    // if we run in silence mode
+    if (powermgm_get_event(POWERMGM_SILENCE_WAKEUP))
+    {
+        if (lv_disp_get_inactive_time(NULL) < display_get_timeout() * 1000)
+        {
             lv_task_handler();
         }
-        else {
-            powermgm_set_event( POWERMGM_STANDBY_REQUEST );
+        else
+        {
+            powermgm_set_event(POWERMGM_STANDBY_REQUEST);
         }
     }
     // if we run on normal mode
-    else if ( !powermgm_get_event( POWERMGM_STANDBY ) ) {
-        if ( lv_disp_get_inactive_time(NULL) < display_get_timeout() * 1000 || display_get_timeout() == DISPLAY_MAX_TIMEOUT ) {
+    else if (!powermgm_get_event(POWERMGM_STANDBY))
+    {
+        if (lv_disp_get_inactive_time(NULL) < display_get_timeout() * 1000 || display_get_timeout() == DISPLAY_MAX_TIMEOUT)
+        {
             lv_task_handler();
         }
-        else {
-            powermgm_set_event( POWERMGM_STANDBY_REQUEST );
+        else
+        {
+            powermgm_set_event(POWERMGM_STANDBY_REQUEST);
         }
     }
 }
 
-void gui_set_background( void ) {
-    bool createBG = true;
-
-    lv_obj_t *img_bin = lv_img_create( lv_scr_act() , NULL );
-
-    if (SPIFFS.exists( gui_BACKGROUND_IMAGE_FILE ) ) {        
-        fs::File file = SPIFFS.open( gui_BACKGROUND_IMAGE_FILE, FILE_READ );
-        if (!file) {
-            log_e("Can't open background image file: %s!", gui_BACKGROUND_IMAGE_FILE );
+void gui_set_background(void)
+{
+    if (SPIFFS.exists(gui_BACKGROUND_IMAGE_FILE))
+    {
+        fs::File file = SPIFFS.open(gui_BACKGROUND_IMAGE_FILE, FILE_READ);
+        if (!file)
+        {
+            log_e("Can't open background image file: %s!", gui_BACKGROUND_IMAGE_FILE);
         }
-        else {
+        else
+        {
             int filesize = file.size();
-            log_i("Opened background image file: %s %d", gui_BACKGROUND_IMAGE_FILE, filesize );
+            log_i("Opened background image file: %s %d", gui_BACKGROUND_IMAGE_FILE, filesize);
+            log_i("Original background image size: %d", bg2.data_size);
 
-            uint8_t bgfile[filesize];
+            uint8_t *bgfile = (uint8_t *)ps_malloc(filesize);
 
-            file.read((uint8_t *)bgfile, sizeof(bgfile));  
-            file.close(); 
+            file.read(bgfile, filesize);
 
+            log_i("Read background image file: %d", filesize);
+
+            for (int i = 0; i < 15; i++)
+            {
+                Serial.printf("%x, ", *(bgfile + i));
+            }
+
+            for (int i = filesize - 15; i < filesize; i++)
+            {
+                Serial.printf("%x, ", *(bgfile + i));
+            }
         }
         file.close();
     }
 
     //Create wallpaper<
-    lv_img_set_src( img_bin, &bg2 );
-    lv_obj_set_width( img_bin, lv_disp_get_hor_res( NULL ) );
-    lv_obj_set_height( img_bin, lv_disp_get_ver_res( NULL ) );
-    lv_obj_align( img_bin, NULL, LV_ALIGN_CENTER, 0, 0 );
+    lv_obj_t *img_bin = lv_img_create(lv_scr_act(), NULL);
+    lv_img_set_src(img_bin, &bg2);
+    lv_obj_set_width(img_bin, lv_disp_get_hor_res(NULL));
+    lv_obj_set_height(img_bin, lv_disp_get_ver_res(NULL));
+    lv_obj_align(img_bin, NULL, LV_ALIGN_CENTER, 0, 0);
 }
