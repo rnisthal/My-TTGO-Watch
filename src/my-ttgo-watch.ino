@@ -25,7 +25,10 @@
 #include <Arduino.h>
 #include "esp_bt.h"
 #include "esp_task_wdt.h"
+<<<<<<< HEAD
 #include <TTGO.h>
+=======
+>>>>>>> 215c024... Configurar watchdog y seguir con lo del wallpaper
 
 #include "gui/gui.h"
 #include "gui/splashscreen.h"
@@ -54,7 +57,11 @@ void setup()
 {
     Serial.begin(115200);
     Serial.printf("starting t-watch V1, version: " __FIRMWARE__ "\r\n");
+<<<<<<< HEAD
     Serial.printf("Configure watchdog to 30s: %d\r\n", esp_task_wdt_init( 30, true ) );
+=======
+    Serial.printf("Configure watchdog to 30s: %d", esp_task_wdt_init(30, false));
+>>>>>>> 215c024... Configurar watchdog y seguir con lo del wallpaper
     
     ttgo->begin();
     ttgo->lvgl_begin();
