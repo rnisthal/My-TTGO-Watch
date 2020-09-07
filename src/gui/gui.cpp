@@ -99,6 +99,8 @@ void gui_loop( void ) {
 void gui_set_background( void ) {
     bool createBG = true;
 
+    lv_obj_t *img_bin = lv_img_create( lv_scr_act() , NULL );
+
     if (SPIFFS.exists( gui_BACKGROUND_IMAGE_FILE ) ) {        
         fs::File file = SPIFFS.open( gui_BACKGROUND_IMAGE_FILE, FILE_READ );
         if (!file) {
@@ -108,21 +110,18 @@ void gui_set_background( void ) {
             int filesize = file.size();
             log_i("Opened background image file: %s %d", gui_BACKGROUND_IMAGE_FILE, filesize );
 
-            lv_obj_t *img_bin = lv_img_create( lv_scr_act() , NULL );
-            lv_img_set_src( img_bin, gui_BACKGROUND_IMAGE_FILE );
-            lv_obj_set_width( img_bin, lv_disp_get_hor_res( NULL ) );
-            lv_obj_set_height( img_bin, lv_disp_get_ver_res( NULL ) );
-            lv_obj_align( img_bin, NULL, LV_ALIGN_CENTER, 0, 0 );
+            uint8_t bgfile[filesize];
+
+            file.read((uint8_t *)bgfile, sizeof(bgfile));  
+            file.close(); 
+
         }
         file.close();
     }
 
-    if ( createBG ) {
-        //Create wallpaper
-        lv_obj_t *img_bin = lv_img_create( lv_scr_act() , NULL );
-        lv_img_set_src( img_bin, &bg2 );
-        lv_obj_set_width( img_bin, lv_disp_get_hor_res( NULL ) );
-        lv_obj_set_height( img_bin, lv_disp_get_ver_res( NULL ) );
-        lv_obj_align( img_bin, NULL, LV_ALIGN_CENTER, 0, 0 );
-    }
+    //Create wallpaper<
+    lv_img_set_src( img_bin, &bg2 );
+    lv_obj_set_width( img_bin, lv_disp_get_hor_res( NULL ) );
+    lv_obj_set_height( img_bin, lv_disp_get_ver_res( NULL ) );
+    lv_obj_align( img_bin, NULL, LV_ALIGN_CENTER, 0, 0 );
 }
