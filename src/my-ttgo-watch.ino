@@ -25,10 +25,7 @@
 #include <Arduino.h>
 #include "esp_bt.h"
 #include "esp_task_wdt.h"
-<<<<<<< HEAD
 #include <TTGO.h>
-=======
->>>>>>> e011a1c1809bc5d1310bd7928b1b3422b98d6ba2
 
 #include "gui/gui.h"
 #include "gui/splashscreen.h"
@@ -57,11 +54,7 @@ void setup()
 {
     Serial.begin(115200);
     Serial.printf("starting t-watch V1, version: " __FIRMWARE__ "\r\n");
-<<<<<<< HEAD
     Serial.printf("Configure watchdog to 30s: %d\r\n", esp_task_wdt_init( 30, true ) );
-=======
-    Serial.printf("Configure watchdog to 30s: %d\r\n", esp_task_wdt_init(30, false));
->>>>>>> e011a1c1809bc5d1310bd7928b1b3422b98d6ba2
     
     ttgo->begin();
     ttgo->lvgl_begin();
